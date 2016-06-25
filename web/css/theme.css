@@ -1,0 +1,38 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.theme-dropdown .dropdown-menu {
+  position: static;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+.theme-showcase .navbar .container {
+  width: auto;
+}
+
+.glyphicon-remove {
+	color: #ff0039;
+}
+
+.glyphicon-edit {
+	color: #2780e3;
+}
+
+.glyphicon-plus-sign {
+	color: #3fb618;
+}
+
+.table-itens {
+	margin-bottom: 0px;
+}
+
+.glyphicon-floppy-saved {
+	color: #3fb618;
+}

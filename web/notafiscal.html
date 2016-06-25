@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="notaFiscalModel">
+<head>
+
+	<link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="img/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+	<link rel="manifest" href="img/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Controle de Estoque</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/theme.css" rel="stylesheet">
+	<script src="js/angular.min.js"></script>
+	<script src="js/angular-locale_pt-br.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/notafiscal.js"></script>
+	<script src="js/tooltip.js"></script>
+</head>
+<body class="docmument" ng-controller="notaFiscalController">
+<nav id="bar" class="navbar navbar-default navbar-fixed-top">
+	<div class="container">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="index.html">Controle de Estoque</a>
+		</div>
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cadastros <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="empresa.html">Empresas</a></li>
+						<li><a href="produto.html">Produtos</a></li>
+						<li><a href="notafiscal.html">Nota Fiscal</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a href="#">Usuário</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Relatórios <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="reportDisponivel" target="_blank">Produtos disponíveis em Estoque</a></li>
+						<li><a href="reportItemEntrada" target="_blank">Entrada de Produtos</a></li>
+						<li><a href="reportItemSaida" target="_blank">Saída de Produtos</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
+</nav>
+
+<div class="container">
+	<div class="search" ng-show="!edditing">
+		<br>
+		<div class="">
+			<form class="form-inline">
+				<label for="inputSearch">Busca:</label>
+				<input ng-model="query" type="text" class="form-control" id="inputSearch" placeholder="Busca">
+			</form>
+		</div>
+		<br>
+		<table class="table table-bordered table-hover">
+			<thead>
+			<tr>
+				<th class="col-xs-1 col-md-1">Id</th>
+				<th class="col-xs-2 col-md-2">Número</th>
+				<th class="col-xs-5 col-md-5">Empresa</th>
+				<th class="col-xs-1 col-md-1">Tipo</th>
+				<th class="col-xs-2 col-md-2">Valor</th>
+				<th class="col-xs-1 col-md-1">Ações</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="notaFiscalTabela in notasFiscais | filter:query">
+				<th scope="row">{{notaFiscalTabela.codigo}}</th>
+				<td>{{notaFiscalTabela.numero}}</td>
+				<td>{{notaFiscalTabela.empresa.nome}}</td>
+				<td>{{notaFiscalTabela.tipo.descricao}}</td>
+				<td class="text-right">{{notaFiscalTabela.valor | currency:'R$ '}}</td>
+				<td>
+					<button ng-click="selecionaNotaFiscal(notaFiscalTabela);" type="button" class="btn btn-xs" aria-label="Left Align">
+						<a href="#" rel="tooltip" data-placement="left" title="Editar"><span
+								class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+					</button>
+					<button ng-click="deletar(notaFiscalTabela);" type="button" class="btn btn-xs" aria-label="Left Align">
+						<a href="#" rel="tooltip" data-placement="left" title="Excluir"><span
+								class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+					</button>
+				</td>
+			</tbody>
+		</table>
+		<div class="row-fluid">
+			<a ng-click="novo();" role="button" class="btn btn-primary">Novo</a>
+			<a href="index.html" role="button" class="btn btn-danger pull-right">Sair</a>
+		</div>
+	</div>
+	<div class="register" ng-show="edditing">
+		<br>
+		<form name="mainForm" class="form-horizontal col-md-12" role="form" ng-submit="incluir(notaFiscal)" novalidate>
+			<div class="form-group">
+				<legend>Nota Fiscal</legend>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-1">
+					<div class="form-group">
+						<label for="inputCodigo">Código</label>
+						<input type="text" name="Codigo" id="inputCodigo" ng-model="notaFiscal.codigo" class="form-control" disabled>
+					</div>
+				</div>
+				<div class="col-sm-1"></div>
+				<div class="col-sm-2">
+					<div class="form-group" ng-class="{ 'has-error' : mainForm.numero.$invalid && !mainForm.numero.$pristine }">
+						<label for="exampleInputName2">Número</label>
+						<input type="text" name="numero" class="form-control" id="exampleInputName2" ng-model="notaFiscal.numero" placeholder="Número da Nota Fiscal" required>
+						<p ng-show="mainForm.numero.$invalid && !mainForm.numero.$pristine" class="help-block">Número é Obrigatório</p>
+					</div>
+				</div>
+				<div class="col-sm-1"></div>
+				<div class="col-sm-2">
+					<div class="form-group" ng-class="{ 'has-error' : mainForm.tipo.$dirty && mainForm.tipo.$invalid }">
+						<label for="inputTipo">Tipo</label>
+						<select name="tipo" class="form-control" id="inputTipo"
+								ng-change="filtrarEmpresa(notaFiscal.tipo);"
+								ng-model="notaFiscal.tipo"
+								ng-options="tipo.descricao for tipo in tipos track by tipo.codigo" required>
+							<option value="">Selecione o Tipo</option>
+						</select>
+						<p ng-show="mainForm.tipo.$dirty && mainForm.tipo.$invalid" class="help-block">Tipo é Obrigatório</p>
+					</div>
+				</div>
+				<div class="col-sm-1"></div>
+				<div class="col-sm-4">
+					<div class="form-group" ng-class="{ 'has-error' : mainForm.empresa.$dirty && mainForm.empresa.$invalid }">
+						<label for="inputEmpresa">Empresa</label>
+						<select name="empresa" class="form-control" id="inputEmpresa"
+								ng-model="notaFiscal.empresa"
+								ng-options="empresa.nome for empresa in empresas  | filter:{tipo : {codigo: tipoFilter}} track by empresa.codigo" required>
+							<option value="">Selecione a Empresa</option>
+						</select>
+						<p ng-show="mainForm.empresa.$dirty && mainForm.empresa.$invalid" class="help-block">Empresa é Obrigatória</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">Itens da Nota Fiscal</div>
+					<div class="table-responsive">
+						<table class="table-itens table table-bordered table-sm table-hover">
+							<thead>
+							<tr>
+								<th class="col-xs-1 col-md-1">Código</th>
+								<th class="col-xs-1 col-md-6">Produto</th>
+								<th class="col-xs-1 col-md-1">Quantidade</th>
+								<th class="col-xs-1 col-md-1">Valor</th>
+								<th class="col-xs-1 col-md-2">Total</th>
+								<th class="col-xs-1 col-md-1">Ações</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr ng-repeat="item in notaFiscal.itens">
+								<th scope="row">
+									<span ng-show="!(edditingItem && edittingLine=={{$index}})">{{item.codigo}}</span>
+									<input ng-show="edditingItem && edittingLine=={{$index}}" type="text" name="Codigo" id="inputItemCodigo" ng-model="item.codigo" class="form-control input-sm" disabled />
+								</th>
+								<td ng-class="{ 'has-error' : mainForm.produto{{$index}}.$dirty && mainForm.produto{{$index}}.$invalid }">
+									<span ng-show="!(edditingItem && edittingLine=={{$index}})">{{item.produto.descricao}}</span>
+									<select name="produto{{$index}}" ng-show="edditingItem && edittingLine=={{$index}}" class="form-control input-sm" id="inputItemProduto"
+											ng-model="item.produto"
+											ng-options="produto.descricao for produto in produtos track by produto.codigo" ng-required="edditingItem && edittingLine=={{$index}}">
+										<option value="">Selecione um Produto</option>
+									</select>
+								</td>
+								<td class="text-right" ng-class="{ 'has-error' : mainForm.qtd{{$index}}.$invalid && !mainForm.qtd{{$index}}.$pristine }" >
+									<span ng-show="!(edditingItem && edittingLine=={{$index}})">{{item.quantidade}}</span>
+									<input name="qtd{{$index}}" ng-show="edditingItem && edittingLine=={{$index}}" type="number" ng-model="item.quantidade" class="form-control input-sm" id="inputItemQuantidade" ng-required="edditingItem && edittingLine=={{$index}}" />
+								</td>
+								<td class="text-right" ng-class="{ 'has-error' : mainForm.valor{{$index}}.$invalid && !mainForm.valor{{$index}}.$pristine }">
+									<span ng-show="!(edditingItem && edittingLine=={{$index}})">{{item.valor | currency:'R$ '}}</span>
+									<input name="valor{{$index}}" ng-show="edditingItem && edittingLine=={{$index}}" type="number" ng-model="item.valor" class="form-control currency input-sm" id="inputItemValor" ng-required="edditingItem && edittingLine=={{$index}}" />
+								</td>
+								<td class="text-right">
+									<span ng-show="!(edditingItem && edittingLine=={{$index}})">{{item.total | currency:'R$ '}}</span>
+									<input ng-show="edditingItem && edittingLine=={{$index}}" type="number" ng-model="item.total" class="form-control input-sm" id="inputItemTotal" disabled value="{{getTotal(item)}}" />
+								</td>
+								<td>
+									<button ng-disabled="mainForm.$invalid && edditingItem && edittingLine=={{$index}}" ng-click="alterLine($index, item);" type="button" class="btn btn-xs" aria-label="Left Align">
+										<a href="" rel="tooltip" data-placement="left" title="Alterar"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+									</button>
+									<button ng-click="cancelLine(item);" type="button" class="btn btn-xs" aria-label="Left Align">
+										<a href="" rel="tooltip" data-placement="left" title="Excluir"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+									</button>
+								</td>
+							</tr>
+							<tr class="editItem" ng-show="bnewLine">
+								<th scope="row">
+									<input type="text" name="Codigo" id="inputItemCodigoN" ng-model="item.codigo" class="form-control input-sm" disabled />
+								</th>
+								<td ng-class="{ 'has-error' : mainForm.produto.$dirty && mainForm.produto.$invalid }">
+									<select name="produto" class="form-control input-sm" id="inputItemProdutoN"
+											ng-model="item.produto"
+											ng-options="produto.descricao for produto in produtos track by produto.codigo" ng-required="bnewLine">
+										<option value="">Selecione um Produto</option>
+									</select>
+								</td>
+								<td class="text-right" ng-class="{ 'has-error' : mainForm.qtd.$invalid && !mainForm.qtd.$pristine }">
+									<input name="qtd" type="number" ng-model="item.quantidade" class="form-control input-sm" id="inputItemQuantidadeN" ng-required="bnewLine" />
+								</td>
+								<td class="text-right" ng-class="{ 'has-error' : mainForm.valor.$invalid && !mainForm.valor.$pristine }">
+									<input name="valor" type="number" ng-model="item.valor" class="form-control currency input-sm" id="inputItemValorN" ng-required="bnewLine" />
+								</td>
+								<td class="text-right">
+									<input type="number" ng-model="item.total" class="form-control input-sm" id="inputItemTotalN" disabled value="{{getTotal(item)}}" />
+								</td>
+								<td>
+									<button ng-disabled="mainForm.$invalid && bnewLine" ng-click="saveNewLine(item);" type="button" class="btn btn-xs" aria-label="Left Align">
+										<a href="#" rel="tooltip" data-placement="left" title="Inserir"><span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span></a>
+									</button>
+									<button ng-click="cancelNewLine($index, item);" type="button" class="btn btn-xs" aria-label="Left Align">
+										<a href="#" rel="tooltip" data-placement="left" title="Cancelar"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+									</button>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+						<button ng-click="newLine();" ng-disabled="bnewLine" type="button" class="btn pull-right" aria-label="Left Align">
+							<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-2 pull-right">
+					<div class="form-group">
+						<label for="inputValorNF">Valor da NF</label>
+						<div class="input-group">
+							<span class="input-group-addon">$</span>
+							<span id="inputValorNF" ng-model="notaFiscal.valor" class="form-control" disabled>{{getTotalNF() | currency:'R$ '}}</span>
+							<!--<input type="number" ng-model="notaFiscal.valor" class="form-control" id="inputValorNF" disabled value="" />-->
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="row-fluid">
+					<button ng-disabled="mainForm.$invalid" type="submit" class="btn btn-primary">{{textSubmit}}
+					</button>
+					<a ng-click="cancel();" role="button" class="btn btn-danger pull-right">Cancelar</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal" id="myModal" role="dialog">
+		<div class="modal-dialog modal-sm">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Mensagem</h4>
+				</div>
+				<div class="modal-body">
+					<p>{{errorMessage}}</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

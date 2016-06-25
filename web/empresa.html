@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="empresaModel">
+<head>
+    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="img/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Controle de Estoque</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/theme.css" rel="stylesheet">
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-locale_pt-br.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/empresa.js"></script>
+    <script src="js/tooltip.js"></script>
+</head>
+<body class="docmument" ng-controller="empresaController">
+<nav id="bar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Controle de Estoque</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Cadastros <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="empresa.html">Empresas</a></li>
+                        <li><a href="produto.html">Produtos</a></li>
+                        <li><a href="notafiscal.html">Nota Fiscal</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Usuário</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Relatórios <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="reportDisponivel" target="_blank">Produtos disponíveis em Estoque</a></li>
+                        <li><a href="reportItemEntrada" target="_blank">Entrada de Produtos</a></li>
+                        <li><a href="reportItemSaida" target="_blank">Saída de Produtos</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container">
+    <div class="search" ng-show="!edditing">
+        <br>
+        <div class="">
+            <form class="form-inline">
+                <label for="inputSearch">Busca:</label>
+                <input ng-model="query" type="text" class="form-control" id="inputSearch" placeholder="Busca">
+            </form>
+        </div>
+        <br>
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th class="col-xs-1 col-md-1">Id</th>
+                <th class="col-xs-7 col-md-9">Nome</th>
+                <th class="col-xs-1 col-md-1">Tipo</th>
+                <th class="col-xs-3 col-md-1">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="empresaTabela in empresas | filter:query">
+                <th scope="row">{{empresaTabela.codigo}}</th>
+                <td>{{empresaTabela.nome}}</td>
+                <td>{{empresaTabela.tipo.descricao}}</td>
+                <td>
+                    <button ng-click="selecionaEmpresa(empresaTabela);" type="button" class="btn btn-xs"
+                            aria-label="Left Align">
+                        <a href="#" rel="tooltip" data-placement="left" title="Editar"><span
+                                class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                    </button>
+                    <button ng-click="deletar(empresaTabela);" type="button" class="btn btn-xs" aria-label="Left Align">
+                        <a href="#" rel="tooltip" data-placement="left" title="Excluir"><span
+                                class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                    </button>
+                </td>
+            </tbody>
+        </table>
+        <div class="row-fluid">
+            <a ng-click="novo();" role="button" class="btn btn-primary">Novo</a>
+            <a href="index.html" role="button" class="btn btn-danger pull-right">Sair</a>
+        </div>
+    </div>
+    <div class="register" ng-show="edditing">
+        <br>
+        <form name="mainForm" class="form-horizontal col-md-6" role="form" ng-submit="incluir(empresa)" novalidate>
+            <div class="form-group">
+                <legend>Empresa</legend>
+            </div>
+
+            <div class="form-group">
+                <label for="inputCodigo">Código</label>
+                <input type="text" name="Codigo" id="inputCodigo" ng-model="empresa.codigo" class="form-control"
+                       disabled>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : mainForm.descricao.$invalid && !mainForm.descricao.$pristine }">
+                <label for="exampleInputName2">Nome</label>
+                <input type="text" name="descricao" class="form-control" id="exampleInputName2" ng-model="empresa.nome"
+                       placeholder="Nome da Empresa" required>
+                <p ng-show="mainForm.descricao.$invalid && !mainForm.descricao.$pristine" class="help-block">Não é permitido campo nome em branco</p>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : mainForm.tipo.$dirty && mainForm.tipo.$invalid }">
+                <label for="inputTipo">Tipo</label>
+                <select name="tipo" class="form-control" id="inputTipo"
+                        ng-model="empresa.tipo"
+                        ng-options="tipo.descricao for tipo in tipos track by tipo.codigo" required>
+                    <option value="">Selecione o Tipo</option>
+                </select>
+                <p ng-show="mainForm.tipo.$dirty && mainForm.tipo.$invalid" class="help-block">Não é permitido campo tipo sem seleção</p>
+            </div>
+
+            <div class="form-group">
+                <div class="row-fluid">
+                    <button ng-disabled="mainForm.$invalid" type="submit" class="btn btn-primary">{{textSubmit}}
+                    </button>
+                    <a ng-click="cancel();" role="button" class="btn btn-danger pull-right">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal" id="myModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mensagem</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{errorMessage}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
